@@ -1,0 +1,48 @@
+name: Release Fedo Boost (Linux Only)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-linux-release:
+    name: Build Linux Release Binary
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Cache Cargo dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build production binary
+        run: cargo build --release --target x86_64-unknown-linux-gnu
+
+      - name: Package Release Tarball
+        run: |
+          mkdir -p release-pkg
+          cp target/x86_64-unknown-linux-gnu/release/fedo-boost release-pkg/
+          cp README.md release-pkg/
+          cp LICENSE release-pkg/
+          cd release-pkg
+          tar -czvf ../fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz fedo-boost README.md LICENSE
+          cd ..
+          sha256sum fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz > fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz.sha256
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz
+            fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz.sha256
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

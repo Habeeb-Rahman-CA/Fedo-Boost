@@ -1,9 +1,11 @@
 [package]
-name = "fedora-boost"
-version = "0.1.0"
+name = "fedo-boost"
+version = "1.0.0"
 edition = "2021"
-authors = ["Fedora Boost Team"]
-description = "A minimal, lightning-fast Fedora system performance assistant TUI"
+authors = ["Fedora Boost Team <habrmnc@fedora.local>"]
+description = "Fedo Boost - High-performance Linux system monitoring, telemetry and automated diagnostic TUI"
+license = "MIT"
+repository = "https://github.com/Habeeb-Rahman-CA/Fedo-Boost"
 
 [dependencies]
 ratatui = "0.29"
@@ -11,7 +13,10 @@ crossterm = "0.28"
 sysinfo = "0.33"
 tokio = { version = "1.42", features = ["full"] }
 anyhow = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-chrono = "0.4"
-libc = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
