@@ -5,10 +5,15 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build-linux-release:
     name: Build Linux Release Binary
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -37,7 +42,7 @@ jobs:
           sha256sum fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz > fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz.sha256
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             fedo-boost-${{ github.ref_name }}-linux-amd64.tar.gz
